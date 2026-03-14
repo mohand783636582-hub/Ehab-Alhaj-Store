@@ -4,18 +4,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: set up JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Build with Gradle
+      - name: Setup Project Structure
         run: |
-          chmod +x gradlew || true
-          ./gradlew assembleDebug || echo "Manual Build Needed"
+          mkdir -p app/src/main/java/com/ehab/alhaj
+          mkdir -p app/src/main/res/layout
+          cp MainActivity.java app/src/main/java/com/ehab/alhaj/ || true
+          cp AndroidManifest.xml app/src/main/ || true
+          cp build.gradle app/ || true
+      - name: Build with Gradle
+        run: gradle assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: Ehab-Alhaj-App
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: "**/*.apk"
