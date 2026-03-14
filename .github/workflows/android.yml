@@ -5,21 +5,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Build with Gradle
         run: |
-          # مسح أي إعدادات قديمة مسببة للمشاكل
+          # تنظيف أي ملفات إعدادات قديمة تسبب تعارض
           rm -f settings.gradle build.gradle || true
-          # إنشاء إعدادات جديدة تربط مجلد app الخاص بك
+          
+          # إنشاء ملف إعدادات جديد يوجه السيرفر لمجلد app الخاص بك
           echo "include ':app'" > settings.gradle
-          # تشغيل البناء مباشرة
+          
+          # أمر بناء التطبيق وتحويل الكود إلى APK
           gradle assembleDebug --stacktrace || echo "فشل البناء ولكن سنحاول الرفع"
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Ehab-Alhaj-App
-          path: "**/*.apk"
+          # هذا المسار الدقيق للبحث عن الملف داخل مجلد app
+          path: "app/build/outputs/apk/debug/*.apk"
+          # إظهار خطأ واضح إذا لم يجد الملف لكي نعرف السبب
+          if-no-files-found: error
