@@ -10,17 +10,10 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Setup Project Structure
-        run: |
-          mkdir -p app/src/main/java/com/ehab/alhaj
-          mkdir -p app/src/main/res/layout
-          cp MainActivity.java app/src/main/java/com/ehab/alhaj/ || true
-          cp AndroidManifest.xml app/src/main/ || true
-          cp build.gradle app/ || true
       - name: Build with Gradle
-        run: gradle assembleDebug
+        run: chmod +x gradlew && ./gradlew assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: Ehab-Alhaj-App
-          path: "**/*.apk"
+          path: app/build/outputs/apk/debug/*.apk
