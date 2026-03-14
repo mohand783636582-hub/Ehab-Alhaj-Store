@@ -10,10 +10,12 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
       - name: Build with Gradle
-        run: chmod +x gradlew && ./gradlew assembleDebug
+        run: gradle assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: Ehab-Alhaj-App
-          path: app/build/outputs/apk/debug/*.apk
+          path: "**/build/outputs/apk/debug/*.apk"
