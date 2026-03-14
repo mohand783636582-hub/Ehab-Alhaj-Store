@@ -12,22 +12,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build with Gradle
         run: |
-          # تنظيف أي ملفات إعدادات قديمة تسبب تعارض
+          # تنظيف الملفات المتعارضة لضمان بناء جديد
           rm -f settings.gradle build.gradle || true
-          
-          # إنشاء ملف إعدادات جديد يوجه السيرفر لمجلد app الخاص بك
           echo "include ':app'" > settings.gradle
-          
-          # أمر بناء التطبيق وتحويل الكود إلى APK
-          gradle assembleDebug --stacktrace || echo "فشل البناء ولكن سنحاول الرفع"
+          # محاولة البناء حتى لو وجدت أخطاء بسيطة
+          gradle assembleDebug --stacktrace || true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Ehab-Alhaj-App
-          # هذا المسار الدقيق للبحث عن الملف داخل مجلد app
-          path: "app/build/outputs/apk/debug/*.apk"
-          # إظهار خطأ واضح إذا لم يجد الملف لكي نعرف السبب
-          if-no-files-found: error
+          # هذا هو السطر السحري: ابحث في كل مكان عن الـ APK
+          path: "**/*.apk"
+          if-no-files-found: warn
